@@ -4,6 +4,7 @@ from typing import List, Dict
 from config import API_KEY, BASE_URL, UNPOPULAR_URL
 
 
+
 # def api_request(endpoint: str, params={}) -> requests.Response:
 #     params['key'] = API_KEY
 #     return requests.get(
@@ -28,6 +29,21 @@ def high(user_input_high):
         string += f"{count}. {k} : {int(v)} баллов\n"
     return string
 
+
+def custom(user_input_custom, year):
+    response = requests.get(f'{BASE_URL}{year}', headers=headers)
+    items_with_name = {}
+    string = ""
+    data = response.json()
+    count = 0
+    for item in data[:user_input_custom]:
+        if 'name' in item:
+            if 'topCriticScore' in item:
+                items_with_name[item['name']] = item['topCriticScore']
+    for k, v in items_with_name.items():
+        count += 1
+        string += f"{count}. {k} : {int(v)} баллов\n"
+    return string
 
 
 
