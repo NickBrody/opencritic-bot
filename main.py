@@ -14,13 +14,22 @@ bot = telebot.TeleBot(BOT_TOKEN, state_storage=state_storage)
 
 @bot.message_handler(commands=['start', 'hello-world'])
 def start(message):
-    bot.send_message(message.chat.id, "Hello world!")
+    name = message.from_user.first_name
+    bot.send_message(message.chat.id, f"Здравствуйте, {name}! Я - бот для поиска самых лучших игр последних лет! "
+                                      f"Введите команду /help для начала работы с ботом.")
+
+
+@bot.message_handler(commands=['help'])
+def help(message):
+    bot.send_message(message.chat.id, "Выберите функцию:\n"
+                                      "/high - Показ лучших игр текущего года\n"
+                                      "/low - Показ самых непопулярных игр текущего года\n"
+                                      "/custom - Показ лучших игр выбранного года\n")
 
 
 @bot.message_handler(func=lambda message: "привет" in message.text.lower())
 def hello(message):
-    name = message.from_user.first_name
-    bot.send_message(message.chat.id, f"Здравствуйте, {name}!")
+    start(message)
 
 
 @bot.message_handler(commands=['low'])
@@ -34,11 +43,13 @@ def low(message):
 def low_state(message):
     try:
         user_input_low = int(message.text)
-        if user_input_low > 0 and user_input_low <= 12:
+        if 0 < user_input_low <= 12:
             bot.send_message(message.chat.id, "Самые непопулярные игры текущего года:")
             result = api.low(user_input_low)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            help(message)
+
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
@@ -59,11 +70,12 @@ def high(message):
 def high_state(message):
     try:
         user_input_high = int(message.text)
-        if user_input_high > 0 and user_input_high <= 12:
+        if 0 < user_input_high <= 12:
             bot.send_message(message.chat.id, "Лучшие игры текущего года:")
             result = api.high(user_input_high)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            help(message)
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
@@ -83,7 +95,7 @@ def custom_year(message):
 def custom(message):
     try:
         year = int(message.text)
-        if year >= 2016 and year <= 2023:
+        if 2016 <= year <= 2023:
             bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
             bot.set_state(message.from_user.id, States.custom, message.chat.id)
             bot.register_next_step_handler(message, custom_state, year)
@@ -100,11 +112,12 @@ def custom(message):
 def custom_state(message, year):
     try:
         user_input_custom = int(message.text)
-        if user_input_custom > 0 and user_input_custom <= 12:
+        if 0 < user_input_custom <= 12:
             bot.send_message(message.chat.id, f"Самые крутые игры {year} года:")
             result = api.custom(user_input_custom, year)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            help(message)
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
@@ -116,7 +129,7 @@ def custom_state(message, year):
 
 @bot.message_handler(func=lambda message: True)
 def default(message):
-    bot.send_message(message.chat.id, 'Такой команды нет, меня ещё дорабатывают :)')
+    bot.send_message(message.chat.id, f"Неверный ввод! Введите команду /help для просмотра функций бота")
 
 
 if __name__ == '__main__':
