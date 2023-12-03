@@ -1,12 +1,25 @@
 import json
+from sqlite3 import IntegrityError
+
 import requests
 import telebot
 from telebot.storage import StateMemoryStorage
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
+
+from peewee import IntegrityError
+
+from models import db, User
+
+
+
 import api
 from config import BOT_TOKEN
 from states import States
+
+
+db.connect()
+db.create_tables([User], safe=True)
 
 state_storage = StateMemoryStorage()
 bot = telebot.TeleBot(BOT_TOKEN, state_storage=state_storage)
@@ -14,9 +27,23 @@ bot = telebot.TeleBot(BOT_TOKEN, state_storage=state_storage)
 
 @bot.message_handler(commands=['start', 'hello-world'])
 def start(message):
-    name = message.from_user.first_name
-    bot.send_message(message.chat.id, f"Здравствуйте, {name}! Я - бот для поиска самых лучших игр последних лет! "
+    user_id = message.from_user.id
+    username = message.from_user.username
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+
+    try:
+        User.create(
+            user_id=user_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        bot.reply_to(message, f"Здравствуйте! Я - бот для поиска самых лучших игр последних лет! "
                                       f"Введите команду /help для начала работы с ботом.")
+    except IntegrityError:
+        bot.reply_to(message, f"Рад вас снова видеть, {first_name}!"
+                              f" Введите команду /help для начала работы с ботом.")
 
 
 @bot.message_handler(commands=['help'])
