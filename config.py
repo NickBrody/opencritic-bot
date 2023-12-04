@@ -7,5 +7,7 @@ else:
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_KEY = os.getenv("API_KEY")
 
-API_BASE_URL = 'https://opencritic-api.p.rapidapi.com/game/hall-of-fame'
+BASE_URL = 'https://opencritic-api.p.rapidapi.com/game/hall-of-fame/'
+
+UNPOPULAR_URL = "https://opencritic-api.p.rapidapi.com/game/popular"
 
