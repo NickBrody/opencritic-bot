@@ -1,19 +1,13 @@
 import json
 from sqlite3 import IntegrityError
-
-import requests
 import telebot
 from telebot.storage import StateMemoryStorage
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, filters
-
 from peewee import IntegrityError
-
 import api
 from config import BOT_TOKEN
 from states import States
-
 from models import db, User
+
 db.connect()
 db.create_tables([User], safe=True)
 
@@ -57,7 +51,7 @@ def help(message):
 def add_history(message):
     user_id = message.from_user.id
     try:
-        bot.send_message(message.chat.id, f"История ваших запросов: {', '.join(history[user_id])}")
+        bot.send_message(message.chat.id, f"История ваших запросов: {', '.join(reversed(history[user_id]))}")
     except KeyError:
         bot.send_message(message.chat.id, "У вас ещё нет истории запросов")
 
