@@ -1,8 +1,12 @@
 import requests
 from config import BASE_URL, UNPOPULAR_URL
 
+"""Функция high - в зависимости от числа введённого пользователем (до 12) создает словарь
+ из переменной response, в котором ключ это 'name', а значение - 'topCriticScore'.
+Возвращает строку с указанным пользователем количеством пар"""
 
-def high(user_input_high):
+
+def high(user_input_high: int) -> str:
     response = requests.get(BASE_URL, headers=headers)
     items_with_name = {}
     string = ""
@@ -18,7 +22,13 @@ def high(user_input_high):
     return string
 
 
-def custom(user_input_custom, year):
+"""Функция custom - принимает 'year', значение которого вводит пользователь в диапазоне 2016-2023. 'year' передаётся 
+в 'BASE_URL'. В зависимости от числа введённого пользователем в 'user_input_custom' (до 12) создает словарь из 
+переменной response, в котором ключ это 'name', а значение - 'topCriticScore'. Возвращает строку с указанным 
+пользователем количеством пар"""
+
+
+def custom(user_input_custom: int, year: int) -> str:
     response = requests.get(f'{BASE_URL}{year}', headers=headers)
     items_with_name = {}
     string = ""
@@ -34,7 +44,12 @@ def custom(user_input_custom, year):
     return string
 
 
-def low(user_input_low):
+"""Функция low - в зависимости от числа введённого пользователем (до 12) создает словарь
+ из переменной response, в котором ключ это 'name', а значение - 'topCriticScore'.
+Возвращает строку с указанным пользователем количеством пар"""
+
+
+def low(user_input_low: int) -> str:
     response = requests.get(UNPOPULAR_URL, headers=headers)
     items_with_name = {}
     string = ""
