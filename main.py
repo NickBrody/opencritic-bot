@@ -90,11 +90,11 @@ def low(message: Message) -> None:
         history[user_id] = [message.text]
     bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
     bot.set_state(message.from_user.id, States.low, message.chat.id)
-    bot.register_next_step_handler(message, low_state)
+    bot.register_next_step_handler(message, low_func)
 
 
 @bot.message_handler(state=States.low)
-def low_state(message: Message) -> None:
+def low_func(message: Message) -> None:
     try:
         user_input_low = int(message.text)
         if 0 < user_input_low <= 12:
@@ -106,10 +106,10 @@ def low_state(message: Message) -> None:
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, low_state)
+            bot.register_next_step_handler(message, low_func)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, low_state)
+        bot.register_next_step_handler(message, low_func)
 
 
 """Команда high, показывает до 12 самых популярных игр текущего года.
@@ -126,11 +126,11 @@ def high(message: Message) -> None:
         history[user_id] = [message.text]
     bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
     bot.set_state(message.from_user.id, States.high, message.chat.id)
-    bot.register_next_step_handler(message, high_state)
+    bot.register_next_step_handler(message, high_func)
 
 
 @bot.message_handler(state=States.high)
-def high_state(message: Message) -> None:
+def high_func(message: Message) -> None:
     try:
         user_input_high = int(message.text)
         if 0 < user_input_high <= 12:
@@ -142,10 +142,10 @@ def high_state(message: Message) -> None:
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, high_state)
+            bot.register_next_step_handler(message, high_func)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, high_state)
+        bot.register_next_step_handler(message, high_func)
 
 
 """Команда custom, показывает до 12 самых популярных игр выбранного года.
@@ -172,7 +172,7 @@ def custom(message: Message) -> None:
         if 2016 <= year <= 2023:
             bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
             bot.set_state(message.from_user.id, States.custom, message.chat.id)
-            bot.register_next_step_handler(message, custom_state, year)
+            bot.register_next_step_handler(message, custom_func, year)
         else:
             bot.send_message(message.chat.id, "Неверный год!")
             bot.send_message(message.chat.id, "Введите год от 2016 до 2023")
@@ -183,7 +183,7 @@ def custom(message: Message) -> None:
 
 
 @bot.message_handler(state=States.custom)
-def custom_state(message: Message, year: int) -> None:
+def custom_func(message: Message, year: int) -> None:
     try:
         user_input_custom = int(message.text)
         if 0 < user_input_custom <= 12:
@@ -195,10 +195,10 @@ def custom_state(message: Message, year: int) -> None:
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, custom_state, year)
+            bot.register_next_step_handler(message, custom_func, year)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, custom_state, year)
+        bot.register_next_step_handler(message, custom_func, year)
 
 
 """Хэндлер для контроля ввода правильных команд. Содержит понятное для пользователя сообщение"""
