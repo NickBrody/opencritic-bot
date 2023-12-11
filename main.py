@@ -4,6 +4,7 @@ import telebot
 from telebot.storage import StateMemoryStorage
 from peewee import IntegrityError
 from telebot.types import Message
+from telebot.custom_filters import StateFilter
 import api
 from config import BOT_TOKEN
 from states import States
@@ -13,6 +14,7 @@ db.connect()
 db.create_tables([User], safe=True)
 
 history = {}
+year_data = {}
 
 state_storage = StateMemoryStorage()
 bot = telebot.TeleBot(BOT_TOKEN, state_storage=state_storage)
@@ -39,6 +41,8 @@ def start(message: Message) -> None:
     except IntegrityError:
         bot.reply_to(message, f"Рад вас снова видеть, {first_name}!"
                               f" Введите команду /help для начала работы с ботом.")
+
+        bot.set_state(message.from_user.id, States.base, message.chat.id)
 
 
 """Команда help, показывает основные команды бота"""
@@ -88,9 +92,9 @@ def low(message: Message) -> None:
         history[user_id] = history[user_id][-10:]
     else:
         history[user_id] = [message.text]
-    bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
+
     bot.set_state(message.from_user.id, States.low, message.chat.id)
-    bot.register_next_step_handler(message, low_func)
+    bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
 
 
 @bot.message_handler(state=States.low)
@@ -102,14 +106,13 @@ def low_func(message: Message) -> None:
             result = api.low(user_input_low)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            bot.set_state(message.from_user.id, States.base, message.chat.id)
             help(message)
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, low_func)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, low_func)
 
 
 """Команда high, показывает до 12 самых популярных игр текущего года.
@@ -124,9 +127,8 @@ def high(message: Message) -> None:
         history[user_id] = history[user_id][-10:]
     else:
         history[user_id] = [message.text]
-    bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
     bot.set_state(message.from_user.id, States.high, message.chat.id)
-    bot.register_next_step_handler(message, high_func)
+    bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
 
 
 @bot.message_handler(state=States.high)
@@ -138,14 +140,13 @@ def high_func(message: Message) -> None:
             result = api.high(user_input_high)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            bot.set_state(message.from_user.id, States.base, message.chat.id)
             help(message)
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, high_func)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, high_func)
 
 
 """Команда custom, показывает до 12 самых популярных игр выбранного года.
@@ -162,28 +163,34 @@ def custom_year(message: Message) -> None:
     else:
         history[user_id] = [message.text]
     bot.send_message(message.chat.id, "Введите искомый год (не раньше 2016)")
-    bot.set_state(message.from_user.id, States.custom, message.chat.id)
-    bot.register_next_step_handler(message, custom)
+    year_data[user_id] = {}
+    bot.set_state(message.from_user.id, States.custom_check_year, message.chat.id)
 
 
-def custom(message: Message) -> None:
+@bot.message_handler(state=States.custom_check_year)
+def custom_check(message: Message) -> None:
+    user_id = message.from_user.id
     try:
         year = int(message.text)
         if 2016 <= year <= 2023:
+            year_data[user_id]['year'] = year
             bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
             bot.set_state(message.from_user.id, States.custom, message.chat.id)
-            bot.register_next_step_handler(message, custom_func, year)
         else:
             bot.send_message(message.chat.id, "Неверный год!")
             bot.send_message(message.chat.id, "Введите год от 2016 до 2023")
-            bot.register_next_step_handler(message, custom)
+            bot.set_state(message.from_user.id, States.custom_check_year, message.chat.id)
+
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, custom)
+        bot.set_state(message.from_user.id, States.custom_check_year, message.chat.id)
 
 
 @bot.message_handler(state=States.custom)
-def custom_func(message: Message, year: int) -> None:
+def custom_func(message: Message) -> None:
+    user_id = message.from_user.id
+    user_info = year_data.get(user_id, {})
+    year = user_info.get('year')
     try:
         user_input_custom = int(message.text)
         if 0 < user_input_custom <= 12:
@@ -191,14 +198,13 @@ def custom_func(message: Message, year: int) -> None:
             result = api.custom(user_input_custom, year)
             json_raw = json.dumps(result, ensure_ascii=False, indent=2)
             bot.send_message(message.chat.id, f'{result}')
+            bot.set_state(message.from_user.id, States.base, message.chat.id)
             help(message)
         else:
             bot.send_message(message.chat.id, "Неверное число!")
             bot.send_message(message.chat.id, "Введите число от 1 до 12")
-            bot.register_next_step_handler(message, custom_func, year)
     except ValueError:
         bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
-        bot.register_next_step_handler(message, custom_func, year)
 
 
 """Хэндлер для контроля ввода правильных команд. Содержит понятное для пользователя сообщение"""
@@ -210,4 +216,5 @@ def default(message: Message) -> None:
 
 
 if __name__ == '__main__':
+    bot.add_custom_filter(StateFilter(bot))
     bot.infinity_polling()
