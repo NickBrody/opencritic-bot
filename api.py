@@ -1,17 +1,5 @@
 import requests
-from typing import List, Dict
-
-from config import API_KEY, BASE_URL, UNPOPULAR_URL
-
-
-
-# def api_request(endpoint: str, params={}) -> requests.Response:
-#     params['key'] = API_KEY
-#     return requests.get(
-#         f'{BASE_URL}/{endpoint}',
-#         params=params
-#     )
-#
+from config import BASE_URL, UNPOPULAR_URL
 
 
 def high(user_input_high):
@@ -46,7 +34,6 @@ def custom(user_input_custom, year):
     return string
 
 
-
 def low(user_input_low):
     response = requests.get(UNPOPULAR_URL, headers=headers)
     items_with_name = {}
@@ -64,9 +51,7 @@ def low(user_input_low):
     return string
 
 
-
-
 headers = {
-	"X-RapidAPI-Key": "e3a4326918mshca5791a432463abp11a615jsn8884f27bcd9f",
-	"X-RapidAPI-Host": "opencritic-api.p.rapidapi.com"
+    "X-RapidAPI-Key": "e3a4326918mshca5791a432463abp11a615jsn8884f27bcd9f",
+    "X-RapidAPI-Host": "opencritic-api.p.rapidapi.com"
 }
