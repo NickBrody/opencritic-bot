@@ -1,5 +1,5 @@
 import requests
-from config import BASE_URL, UNPOPULAR_URL
+from config import BASE_URL, UNPOPULAR_URL, headers
 
 """Функция high - в зависимости от числа введённого пользователем (до 12) создает словарь
  из переменной response, в котором ключ это 'name', а значение - 'topCriticScore'.
@@ -64,9 +64,3 @@ def low(user_input_low: int) -> str:
         count += 1
         string += f"{count}. {k} : {int(v)} баллов\n"
     return string
-
-
-headers = {
-    "X-RapidAPI-Key": "e3a4326918mshca5791a432463abp11a615jsn8884f27bcd9f",
-    "X-RapidAPI-Host": "opencritic-api.p.rapidapi.com"
-}

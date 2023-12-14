@@ -5,7 +5,11 @@ if not find_dotenv():
 else:
     load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-API_KEY = os.getenv("API_KEY")
+
+headers = {
+    "X-RapidAPI-Key": os.getenv("API_KEY"),
+    "X-RapidAPI-Host": os.getenv("API_HOST")
+}
 
 BASE_URL = 'https://opencritic-api.p.rapidapi.com/game/hall-of-fame/'
 
