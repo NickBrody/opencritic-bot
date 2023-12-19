@@ -15,3 +15,4 @@ BASE_URL = 'https://opencritic-api.p.rapidapi.com/game/hall-of-fame/'
 
 UNPOPULAR_URL = "https://opencritic-api.p.rapidapi.com/game/popular"
 
+PIC_URL = "https://img.opencritic.com/"

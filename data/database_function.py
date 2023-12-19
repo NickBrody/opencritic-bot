@@ -2,6 +2,8 @@ from peewee import IntegrityError
 from data.models import User
 from loader import bot
 
+history = {}
+
 
 def database_check(message):
     """Функция database_check. Регистрирует пользователя в базе данных, если его там нет.
