@@ -39,13 +39,22 @@
 Также зависимости указаны в файле requirements.txt
 
 certifi==2023.11.17
+
 charset-normalizer==3.3.2
+
 idna==3.6
+
 peewee==3.17.0
+
 pyTelegramBotAPI==4.14.0
+
 python-dotenv==1.0.0
+
 requests==2.31.0
+
 telebot==0.0.5
+
 urllib3==2.1.0
+
 
 
