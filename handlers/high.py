@@ -1,8 +1,6 @@
-import json
 from telebot.types import Message
-from config import api
-from data.history_data import history
-from handlers.help import help_command
+from data.database_function import history
+from handlers.check_value_func import check_value, count
 from loader import bot
 from states.states import States
 
@@ -22,22 +20,6 @@ def high_check_input(message: Message) -> None:
 
 
 @bot.message_handler(state=States.high)
-def high_return_result(message: Message) -> None:
-    """Функция high_return_result проверяет введённое пользователем число до тех пор, пока оно не станет
-    соответствовать требованиям (ввод должен быть в диапазоне от 1 до 12).
-    В случае успеха вызывает high_api_check из файла api.py. Сразу после вызывает функцию help_command для удобства
-    пользователя."""
-    try:
-        user_input_high = int(message.text)
-        if 0 < user_input_high <= 12:
-            bot.send_message(message.chat.id, "Лучшие игры текущего года:")
-            result = api.high_api_check(user_input_high)
-            json_raw = json.dumps(result, ensure_ascii=False, indent=2)
-            bot.send_message(message.chat.id, f'{result}')
-            bot.set_state(message.from_user.id, States.base, message.chat.id)
-            help_command(message)
-        else:
-            bot.send_message(message.chat.id, "Неверное число!")
-            bot.send_message(message.chat.id, "Введите число от 1 до 12")
-    except ValueError:
-        bot.send_message(message.chat.id, "Ошибка! Введите число вместо букв.")
+def high_to_check_value(message: Message) -> None:
+    """Функция high_to_check_value переходит в функцию check_value для проверки правильности введённых значений."""
+    check_value(message, count)

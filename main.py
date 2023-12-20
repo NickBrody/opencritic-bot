@@ -1,10 +1,8 @@
 from telebot.types import Message
 from telebot.custom_filters import StateFilter
-
 from loader import bot
 from data.models import db, User
-
-from handlers import custom, help, high, history, low, start
+from handlers import custom, help, high, history, low, start  # noqa
 
 db.connect()
 db.create_tables([User], safe=True)

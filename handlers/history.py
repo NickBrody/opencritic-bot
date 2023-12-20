@@ -1,5 +1,5 @@
 from telebot.types import Message
-from data.history_data import history
+from data.database_function import history
 from handlers.help import help_command
 from loader import bot
 
