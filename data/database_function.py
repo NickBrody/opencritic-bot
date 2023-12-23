@@ -1,13 +1,16 @@
 from peewee import IntegrityError
+from telebot.types import Message
 from data.models import User
 from loader import bot
 
-history = {}
 
-
-def database_check(message):
+def database_check(message: Message) -> None:
     """Функция database_check. Регистрирует пользователя в базе данных, если его там нет.
-     После приветствует пользователя"""
+    После приветствует пользователя.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    Returns:
+    None: Функция не возвращает значения."""
     user_id = message.from_user.id
     username = message.from_user.username
     first_name = message.from_user.first_name

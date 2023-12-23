@@ -6,13 +6,21 @@ from states.states import States
 
 @bot.message_handler(commands=['start'])
 def bot_start(message: Message) -> None:
-    """Функция bot_start. Запускает функцию для регистрации пользователя в базе данных, если его там нет."""
+    """Функция bot_start. Запускает функцию для регистрации пользователя в базе данных, если его там нет.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    Returns:
+    None: Функция не возвращает значения."""
     database_check(message)
     bot.set_state(message.from_user.id, States.base, message.chat.id)
 
 
 @bot.message_handler(func=lambda message: "привет" in message.text.lower())
 def bot_say_hello(message: Message) -> None:
-    """Приветствует пользователя на сообщение 'привет'. Аналог функции start"""
+    """Приветствует пользователя на сообщение 'привет'. Аналог функции start.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    Returns:
+    None: Функция не возвращает значения."""
     bot_start(message)
 
