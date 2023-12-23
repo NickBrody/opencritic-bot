@@ -1,7 +1,9 @@
+from telebot.types import Message
 from api import api
 from api.api import big_dict_high, big_dict_low, big_dict_custom
 from config.config import PIC_URL
-from data.database_function import history
+from data.history_database import get_last_user_choice
+from data.models import Commands
 from handlers.help import help_command
 from loader import bot
 from states.states import States
@@ -11,18 +13,30 @@ year_data = {}
 count = 0
 
 
-def check_value(message, count):
+def check_value(message: Message, count: int) -> None:
     """Функция check_value проверяет введённое пользователем число до тех пор, пока оно не станет
     соответствовать требованиям (ввод должен быть в диапазоне от 1 до 12).
     В случае успеха вызывает функцию из файла api.py в зависимости от того, какой командой пользователь
     попал в check_value. Отправляет пользователю запрашиваемую конечную информацию.
-    Сразу после вызывает функцию help_command для удобства пользователя."""
+    Сразу после вызывает функцию help_command для удобства пользователя.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    count (int): Объект, содержащий число.
+    Returns:
+    None: Функция не возвращает значения"""
     try:
         user_input = int(message.text)
         if 0 < user_input <= 12:
+            user_string = ""
             user_id = message.from_user.id
-            user_choice = history[user_id][-1]
+            user_choice = get_last_user_choice(user_id)
+            if user_choice == "/custom":
+                user_string += f"{str(year_data[user_id]["year"])}, "
 
+            user_string += message.text
+            command = Commands.select().where(Commands.user == user_id).order_by(Commands.id.desc()).get()
+            command.user_params = user_string
+            command.save()
             if user_choice == "/high":
                 big_dict_high.clear()
                 bot.send_message(message.chat.id, "Лучшие игры текущего года:")
@@ -48,7 +62,7 @@ def check_value(message, count):
                 user_info = year_data.get(user_id, {})
                 year = user_info.get('year')
                 bot.send_message(message.chat.id, f"Самые крутые игры {year} года:")
-                api.custom_api_check(user_input, year)
+                api.custom_api_check(year, user_input)
                 for k, v in big_dict_custom.items():
                     count += 1
                     msg = f"{count}. {k}: {v[1]} баллов"
