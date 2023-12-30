@@ -9,7 +9,6 @@ from states.states import States
 @bot.message_handler(commands=['custom'])
 def custom_input_year(message: Message) -> None:
     """Функция custom_input_year запрашивает у пользователя год, передавая его в custom_check_input.
-    Также записывает команду в словарь history.
     Args:
     message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
     Returns:
