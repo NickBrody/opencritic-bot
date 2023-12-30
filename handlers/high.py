@@ -9,7 +9,6 @@ from states.states import States
 @bot.message_handler(commands=['high'])
 def high_check_input(message: Message) -> None:
     """Функция high_check_input запрашивает у пользователя год, передавая его в high_return_result.
-    Также записывает команду в словарь history.
     Args:
     message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
     Returns:
