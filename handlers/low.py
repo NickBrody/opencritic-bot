@@ -9,7 +9,6 @@ from states.states import States
 @bot.message_handler(commands=['low'])
 def low_check_input(message: Message) -> None:
     """Функция low_check_input запрашивает у пользователя год, передавая его в low_return_result.
-    Также записывает команду в словарь history.
     Args:
     message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
     Returns:
