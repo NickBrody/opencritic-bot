@@ -33,13 +33,13 @@ def custom_check_input(message: Message) -> None:
     user_id = message.from_user.id
     try:
         year = int(message.text)
-        if 2016 <= year <= 2023:
+        if 2016 <= year <= 2024:
             year_data[user_id]['year'] = year
             bot.send_message(message.chat.id, "Введите количество игр (не больше 12)")
             bot.set_state(message.from_user.id, States.custom, message.chat.id)
         else:
             bot.send_message(message.chat.id, "Неверный год!")
-            bot.send_message(message.chat.id, "Введите год от 2016 до 2023")
+            bot.send_message(message.chat.id, "Введите год от 2016 до 2024")
             bot.set_state(message.from_user.id, States.custom_check_year, message.chat.id)
 
     except ValueError:

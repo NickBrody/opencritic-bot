@@ -1,6 +1,9 @@
 import requests
+
 from api.dicts.dicts import * #noqa
 from config.config import BASE_URL, UNPOPULAR_URL, headers
+from handlers.help import help_command
+
 
 
 def high_api_check(user_input: int) -> None:

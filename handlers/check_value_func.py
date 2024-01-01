@@ -41,6 +41,8 @@ def check_value(message: Message, count: int) -> None:
                 big_dict_high.clear()
                 bot.send_message(message.chat.id, "Лучшие игры текущего года:")
                 api.high_api_check(user_input)
+                if big_dict_high == {}:
+                    bot.send_message(message.chat.id, "В этом году OpenCritic ещё не сформировал топ игр! ")
                 for k, v in big_dict_high.items():
                     count += 1
                     msg = f"{count}. {k}: {v[1]} баллов"
@@ -49,7 +51,7 @@ def check_value(message: Message, count: int) -> None:
 
             elif user_choice == "/low":
                 big_dict_low.clear()
-                bot.send_message(message.chat.id, "Самые непопулярные игры текущего года:")
+                bot.send_message(message.chat.id, "Самые непопулярные игры последних месяцев:")
                 api.low_api_check(user_input)
                 for k, v in big_dict_low.items():
                     count += 1
@@ -63,6 +65,8 @@ def check_value(message: Message, count: int) -> None:
                 year = user_info.get('year')
                 bot.send_message(message.chat.id, f"Самые крутые игры {year} года:")
                 api.custom_api_check(year, user_input)
+                if big_dict_custom == {}:
+                    bot.send_message(message.chat.id, "В этом году OpenCritic ещё не сформировал топ игр! ")
                 for k, v in big_dict_custom.items():
                     count += 1
                     msg = f"{count}. {k}: {v[1]} баллов"
