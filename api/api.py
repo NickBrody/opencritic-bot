@@ -1,9 +1,8 @@
 import requests
 
-from api.dicts.dicts import * #noqa
+from api.dicts.dicts import *  # noqa
 from config.config import BASE_URL, UNPOPULAR_URL, headers
 from handlers.help import help_command
-
 
 
 def high_api_check(user_input: int) -> None:
@@ -18,9 +17,18 @@ def high_api_check(user_input: int) -> None:
     items_with_image_high.clear()
     items_with_name_high.clear()
     data = response.json()
+
     for item in data[:user_input]:
-        items_with_name_high[item['name']] = item['topCriticScore']
-        items_with_image_high[item['name']] = item["images"]["box"]["og"]
+        if "images" in item and item["images"]:
+            if "box" in item["images"]:
+                items_with_image_high[item['name']] = item["images"]["box"]["og"]
+            else:
+                items_with_image_high[item['name']] = item["images"]["banner"]["og"]
+            items_with_name_high[item['name']] = item['topCriticScore']
+            items_with_image_high[item['name']] = item["images"]["box"]["og"]
+        else:
+            pass
+
     for k in dicts_high[0]:
         big_dict_high[k] = [d[k] for d in dicts_high]
 
@@ -39,8 +47,12 @@ def low_api_check(user_input: int) -> None:
     items_with_name_low.clear()
     data = response.json()
     for item in data:
+        if "box" in item["images"]:
+            items_with_image_low[item['name']] = item["images"]["box"]["og"]
+        else:
+            items_with_image_low[item['name']] = item["images"]["banner"]["og"]
         items_with_name_low[item['name']] = item['topCriticScore']
-        items_with_image_low[item['name']] = item["images"]["box"]["og"]
+        # items_with_image_low[item['name']] = item["images"]["box"]["og"]
     sorted_items = (sorted(items_with_name_low.items(), key=lambda x: x[1], reverse=False))[:user_input]
     sorted_dict = {k: v for k, v in sorted_items}
     sorted_images_low.clear()
@@ -74,4 +86,3 @@ def custom_api_check(year: int, user_input: int) -> None:
             items_with_image_custom[item['name']] = item["images"]["banner"]["og"]
     for k in dicts_custom[0]:
         big_dict_custom[k] = [d[k] for d in dicts_custom]
-

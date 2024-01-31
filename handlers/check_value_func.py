@@ -31,7 +31,7 @@ def check_value(message: Message, count: int) -> None:
             user_id = message.from_user.id
             user_choice = get_last_user_choice(user_id)
             if user_choice == "/custom":
-                user_string += f"{str(year_data[user_id]["year"])}, "
+                user_string += f"{str(year_data[user_id]['year'])}, "
 
             user_string += message.text
             command = Commands.select().where(Commands.user == user_id).order_by(Commands.id.desc()).get()
