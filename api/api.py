@@ -79,10 +79,14 @@ def custom_api_check(year: int, user_input: int) -> None:
     items_with_name_custom.clear()
     data = response.json()
     for item in data[:user_input]:
-        items_with_name_custom[item['name']] = item['topCriticScore']
-        if "box" in item["images"]:
+        if "images" in item and item["images"]:
+            if "box" in item["images"]:
+                items_with_image_custom[item['name']] = item["images"]["box"]["og"]
+            else:
+                items_with_image_custom[item['name']] = item["images"]["banner"]["og"]
+            items_with_name_custom[item['name']] = item['topCriticScore']
             items_with_image_custom[item['name']] = item["images"]["box"]["og"]
         else:
-            items_with_image_custom[item['name']] = item["images"]["banner"]["og"]
+            pass
     for k in dicts_custom[0]:
         big_dict_custom[k] = [d[k] for d in dicts_custom]
