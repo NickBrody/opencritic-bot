@@ -25,7 +25,7 @@ def high_api_check(user_input: int) -> None:
                 else:
                     items_with_image_high[item['name']] = item["images"]["banner"]["og"]
                 items_with_name_high[item['name']] = item['topCriticScore']
-                items_with_image_high[item['name']] = item["images"]["box"]["og"]
+                #items_with_image_high[item['name']] = item["images"]["box"]["og"]
             else:
                 pass
     except:
@@ -90,7 +90,7 @@ def custom_api_check(year: int, user_input: int) -> None:
                 else:
                     items_with_image_custom[item['name']] = item["images"]["banner"]["og"]
                 items_with_name_custom[item['name']] = item['topCriticScore']
-                items_with_image_custom[item['name']] = item["images"]["box"]["og"]
+                #items_with_image_custom[item['name']] = item["images"]["box"]["og"]
             else:
                 pass
     except:
