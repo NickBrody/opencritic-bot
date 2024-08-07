@@ -2,12 +2,10 @@ from telebot.types import Message
 from telebot.custom_filters import StateFilter
 from loader import bot
 from data.models import db, User, Commands
-from handlers import custom, help, high, history, low, start  # noqa
+from handlers import custom, help, high, history, low, start, game  # noqa
 
 db.connect()
 db.create_tables([User, Commands], safe=True)
-
-
 
 
 @bot.message_handler(func=lambda message: True)

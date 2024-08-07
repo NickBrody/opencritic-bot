@@ -1,8 +1,10 @@
 import requests
-
+from bs4 import BeautifulSoup
 from api.dicts.dicts import *  # noqa
 from config.config import BASE_URL, UNPOPULAR_URL, headers
 from handlers.help import help_command
+
+URL_FOR_PARSING = "https://opencritic.com/game/"
 
 
 def high_api_check(user_input: int) -> None:
@@ -97,3 +99,27 @@ def custom_api_check(year: int, user_input: int) -> None:
         pass
     for k in dicts_custom[0]:
         big_dict_custom[k] = [d[k] for d in dicts_custom]
+
+
+def get_game_api(link):
+    response = requests.get(URL_FOR_PARSING+link)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    score = soup.find('div', class_='inner-orb')
+    score_to_bot = score.text.strip() if score else None
+
+    game_name_parsing = soup.find('h1', class_='mb-0')
+    game_to_bot = game_name_parsing.text.strip()
+
+    img_element = soup.find('img', attrs={'_ngcontent-serverapp-c92': ''})
+    next_img_element = img_element.find_next('img')
+    img_to_bot = next_img_element.get('src') if img_element else None
+
+    game_dict['name'] = game_to_bot
+    game_dict['score'] = score_to_bot
+    game_dict['img'] = img_to_bot
+
+    print(game_dict)
+
+
+

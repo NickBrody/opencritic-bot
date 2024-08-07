@@ -13,3 +13,4 @@ class States(StatesGroup):
     high = State()
     custom = State()
     custom_check_year = State()
+    game = State()
