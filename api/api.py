@@ -119,7 +119,5 @@ def get_game_api(link):
     game_dict['score'] = score_to_bot
     game_dict['img'] = img_to_bot
 
-    print(game_dict)
-
 
 
