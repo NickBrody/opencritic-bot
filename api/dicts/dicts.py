@@ -17,3 +17,5 @@ dicts_custom = [items_with_image_custom, items_with_name_custom]
 big_dict_high = {}
 big_dict_low = {}
 big_dict_custom = {}
+
+game_dict = {}
