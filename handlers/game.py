@@ -9,6 +9,7 @@ from config import config
 from config.config import GAME_URL
 from api.api import get_game_api
 from api.dicts.dicts import game_dict
+from data.models import Commands
 
 @bot.message_handler(commands=['game'])
 def game_input(message: Message) -> None:
@@ -34,9 +35,15 @@ def game_search(message: Message) -> None:
     user_game = message.text
     querystring = {"criteria":user_game}
     response = requests.get(GAME_URL, headers=config.headers, params=querystring)
-    bot.send_message(message.chat.id, "Принято")
+    bot.send_message(message.chat.id, "Поиск игры...")
+
+    user_string = message.text
+    user_id = message.from_user.id
+    command = Commands.select().where(Commands.user == user_id).order_by(Commands.id.desc()).get()
+    command.user_params = user_string
+    command.save()
+
     games_list = response.json()
-    print(games_list)
     game_id = str(games_list[0]["id"])
     game_title = str(games_list[0]["name"]).replace(" ", "-").replace(":", "-").lower()
     game_link = game_id + "/" + game_title
@@ -44,6 +51,7 @@ def game_search(message: Message) -> None:
     get_game_api(game_link)
 
     msg = f"{game_dict["name"]} - {game_dict["score"]} баллов"
-    photo_path = "https://opencritic.com/game/" + game_dict["img"]
+    photo_path = game_dict["img"]
     bot.send_photo(message.chat.id, photo=photo_path, caption=msg)
+    
  
