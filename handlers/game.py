@@ -50,8 +50,8 @@ def game_search(message: Message) -> None:
 
     get_game_api(game_link)
 
-    msg = f"{game_dict["name"]} - {game_dict["score"]} баллов"
-    photo_path = game_dict["img"]
+    msg = f"{game_dict['name']} - {game_dict["score"]} баллов"
+    photo_path = game_dict['img']
     bot.send_photo(message.chat.id, photo=photo_path, caption=msg)
     
  
