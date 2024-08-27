@@ -13,11 +13,11 @@ from data.models import Commands
 
 @bot.message_handler(commands=['game'])
 def game_input(message: Message) -> None:
-    # """Функция high_check_input запрашивает у пользователя год, передавая его в high_return_result.
-    # Args:
-    # message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
-    # Returns:
-    # None: Функция не возвращает значения."""
+    """Функция game_input запрашивает у пользователя игру.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    Returns:
+    None: Функция не возвращает значения."""
     database_register_warning(message)
     creating_history(message)
     bot.set_state(message.from_user.id, States.game, message.chat.id)
@@ -27,11 +27,11 @@ def game_input(message: Message) -> None:
 
 @bot.message_handler(state=States.game)
 def game_search(message: Message) -> None:
-    # """Функция high_to_check_value переходит в функцию check_value для проверки правильности введённых значений.
-    # Args:
-    # message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
-    # Returns:
-    # None: Функция не возвращает значения."""
+    """Функция game_search оптравляет пользователю данные искомой игры.
+    Args:
+    message (Message): Объект сообщения, содержащий введённое пользователем сообщение.
+    Returns:
+    None: Функция не возвращает значения."""
     user_game = message.text
     querystring = {"criteria":user_game}
     response = requests.get(GAME_URL, headers=config.headers, params=querystring)
@@ -50,7 +50,7 @@ def game_search(message: Message) -> None:
 
     get_game_api(game_link)
 
-    msg = f"{game_dict['name']} - {game_dict['score']} баллов"
+    msg = f"{game_dict['name']} - {game_dict['score']} баллов\nРекомендуют {game_dict['percent']} критиков"
     photo_path = game_dict['img']
     bot.send_photo(message.chat.id, photo=photo_path, caption=msg)
     

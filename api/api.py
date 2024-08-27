@@ -102,11 +102,18 @@ def custom_api_check(year: int, user_input: int) -> None:
 
 
 def get_game_api(link):
+    """Фукнция get_game_api ищет введённую игру, собирает необходимые данные и записывает в словарь.
+    Args:
+    user_input (int): Объект, содержащий введённое пользователем число.
+    Returns:
+    None: Функция не возвращает значения."""
     response = requests.get(URL_FOR_PARSING+link)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     score = soup.find('div', class_='inner-orb')
+    percent = score.find_next('div', class_='inner-orb')
     score_to_bot = score.text.strip() if score else None
+    percent_to_bot = percent.text.strip() if score else None
 
     game_name_parsing = soup.find('h1', class_='mb-0')
     game_to_bot = game_name_parsing.text.strip()
@@ -118,3 +125,4 @@ def get_game_api(link):
     game_dict['name'] = game_to_bot
     game_dict['score'] = score_to_bot
     game_dict['img'] = img_to_bot
+    game_dict['percent'] = percent_to_bot
